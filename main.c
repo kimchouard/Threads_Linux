@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "lire.c"
+
 int is_prime( uint64_t p )
 {
 	int i;
@@ -74,5 +76,6 @@ main()
 		pthread_exit ( &t[i] );
 	}*/
 
-	print_prime_factors(12923);	
+	print_prime_factors(12923);
+	//print_prime_factors( 84 );
 }
