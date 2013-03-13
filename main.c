@@ -4,6 +4,11 @@
 
 //#include "lire.c"
 
+//---------------------------------------------------------------
+//					Fonctions utiles
+//---------------------------------------------------------------
+
+//Renvoie 1 si entier, 0 sinon.
 int is_prime( uint64_t p )
 {
 	if (p <= 2)
@@ -28,6 +33,7 @@ int is_prime( uint64_t p )
 	}
 }
 
+//Affiche la factoriasation en nombre premier
 void print_prime_factors( uint64_t n )
 {
 	int i = 2;
@@ -58,6 +64,27 @@ void print_prime_factors( uint64_t n )
 	printf("%i \n", reste);	
 }
 
+//---------------------------------------------------------------
+//				Parcours simple sans threads
+//			(possibilité de faire une boucle 2 par 2)
+//---------------------------------------------------------------
+
+void display_simple(int val[], int nb_valeurs, int pair = 0)
+{
+	if (pair == 0)
+	{
+		int j;
+		for ( j = 0 ; j < 4 ; j++ )
+		{
+			print_prime_factors(val[j]);
+		}
+	}
+}
+
+//---------------------------------------------------------------
+//				Parcours avec 2 threads
+//---------------------------------------------------------------
+
 void dual_thread(int val[], int nb_valeurs)
 {
 	pthread_t t[nb_valeurs];
@@ -81,6 +108,10 @@ void dual_thread(int val[], int nb_valeurs)
 	}
 }
 
+//---------------------------------------------------------------
+//			 Parcours avec 2 threads optimisé
+//---------------------------------------------------------------
+
 void dual_thread_optimise(int val[], int nb_valeurs)
 {
 	pthread_t t[nb_valeurs];
@@ -89,8 +120,7 @@ void dual_thread_optimise(int val[], int nb_valeurs)
 	for ( i = 0 ; i < nb_valeurs ; i+=2 )
 	{
 		//Création du thread
-		int pid_thread = pthread_create( &t[i], NULL, print_prime_factors, ( void * ) val[i] );
-		int pid_thread2 = pthread_create( &t[i+1], NULL, print_prime_factors, ( void * ) val[i+1] );
+		int pid_thread = pthread_create( &t[i], NULL, display_simple, ( void * ) val, ( void * ) nb_valeurs, ( void * ) 1);
 
 		//Liaison avec le main
 		pthread_join ( t[i], NULL  );
@@ -103,6 +133,10 @@ void dual_thread_optimise(int val[], int nb_valeurs)
 		pthread_exit ( &t[i] );
 	}
 }
+
+//---------------------------------------------------------------
+//			 		Main
+//---------------------------------------------------------------
 
 main(int argc, char* argv[])
 {
@@ -117,11 +151,7 @@ main(int argc, char* argv[])
 	//Sans thread
 	if (methode == 0)
 	{
-		int j;
-		for ( j = 0 ; j < 4 ; j++ )
-		{
-			print_prime_factors(val[j]);
-		}
+		display_simple(val, 4);
 	}
 	//Avec thread simple
 	else if (methode == 1)
