@@ -23,8 +23,10 @@ void print_prime_factors( uint64_t n )
 	int i = 2;
 	int reste = n;
 	
+	printf("%i : ", reste);
+	
 	//On parcours tous les nombres necéssaire.
-	while ( i < reste )
+	while ( !is_prime(reste) )
 	{
 		//Si c'est un nombre premier
 		if ( is_prime( i ) )
@@ -48,5 +50,29 @@ void print_prime_factors( uint64_t n )
 
 main()
 {
-	print_prime_factors( 84 );
+	/* /Tableau de test
+	int val[6] = {12923, 29872, 12923, 18152, 11953, 12923};
+
+	pthread_t t[6];
+
+	int i;
+	for ( i = 0 ; i < 6 ; i+=2 )
+	{
+		//Création du thread
+		int pid_thread = pthread_create( &t[i], NULL, print_prime_factors, ( void * ) val[i] );
+		int pid_thread2 = pthread_create( &t[i+1], NULL, print_prime_factors, ( void * ) val[i+1] );
+		printf( "Je crée le thread : %d\n", i );
+
+		//Liaison avec le main
+		pthread_join ( t[i], NULL  );
+		pthread_join ( t[i+1], NULL  );
+	}
+
+	for ( i = 0 ; i < 5 ; i++ )
+	{
+		//Quite les threads
+		pthread_exit ( &t[i] );
+	}*/
+
+	print_prime_factors(12923);	
 }
