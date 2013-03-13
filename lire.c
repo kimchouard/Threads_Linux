@@ -1,34 +1,38 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 
-static long seek_curr;
+static int seek_cur = 0;
 
-int lire_nombre ( uint64_t *nombre )
+int lire_nombre ( uint64_t *nombre, int reset = 0 )
 {
    	FILE * file;
    	
   	file = fopen ( "gen.txt" , "r" );
+   	
+   	if ( reset ) 
+   	{
+   		seek_cur ( 0 );	
+   	}
    
-   	fseek ( file, 0, seek_curr); 	// seek to the current number of the file
+   	fseek ( file, seek_cur, SEEK_SET ); 	// seek to the current number of the file
    	
 	char number [100];
 	char buf;
    	int i = 0;
    	
-  	if (pFile == NULL) 
+  	if ( file == NULL ) 
   	{
   		perror ("Error opening file");
   	}
    	else
    	{
-    	while ( ! feof ( pFile ) )
+    	while ( ! feof ( file ) )
      	{
-       		while ( fgets ( buf , 1 , pFile ) != NULL && buf != '\n' ) 
-       		{
-       			number[i++] += buf;	
-       		}
-       		nombre = _atoi64 ( number );
+       		fscanf ( file, "%llu", nombre );
+       		seek_cur = ftell ( file );
+       		return 1;
      	}
    }
    return 0;
