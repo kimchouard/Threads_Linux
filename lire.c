@@ -25,7 +25,7 @@ int lire_nombre ( uint64_t *nombre, char * filePath, int reset )
 	if ( file == NULL ) 
 	{
 		perror ("Error opening file");
-    return 0;
+    return 1;
 	}
  	else
  	{
@@ -35,10 +35,10 @@ int lire_nombre ( uint64_t *nombre, char * filePath, int reset )
     //Si on est à la fin du fichier
     if ( feof ( file ) )
     {
-      return 0;
+      return 1;
    	}
    }
 
-   return 1;
+   return 0;
 }
 
