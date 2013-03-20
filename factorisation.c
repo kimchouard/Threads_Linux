@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+//#define OUT
+
 //---------------------------------------------------------------
 //					Fonctions utiles
 //---------------------------------------------------------------
@@ -36,8 +38,10 @@ void * print_prime_factors( void * n )
 {
 	int i = 2;
 	uint64_t reste = *((uint64_t *) n);
-	
+
+#ifdef OUT
 	printf("%llu : ", reste);
+#endif
 	
 	//On parcours tous les nombres jusqu'à ce que le reste soit premier.
 	while ( ! is_prime(reste) )
@@ -51,15 +55,19 @@ void * print_prime_factors( void * n )
 				//On stocke le resultat de la division dans reste
 				reste = reste/i;
 
+#ifdef OUT
 				//On affiche le nombre
 				printf("%i ", i);
+#endif
 			}
 		}
 
 		i++;
 	}
 
-	printf("%llu \n", reste);	
+#ifdef OUT
+	printf("%llu \n", reste);
+#endif	
 }
 
 //---------------------------------------------------------------
