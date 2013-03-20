@@ -2,12 +2,48 @@
 #include <stdio.h>
 #include <stdint.h>
 
+//---------------------------------------------------------------
+//			 		Lire dans le fichier
+//---------------------------------------------------------------
 
-#define MAX_FACTORS 64
+static int seek_cur = 0;
 
-#include "lire.c"
-#include "factorisation_screen.c"
-#include "factorisation_file.c"
+int lire_nombre ( uint64_t *nombre, char * filePath, int reset )
+{
+ 	FILE * file;
+ 	
+	file = fopen ( filePath , "r" );
+ 	
+ 	if ( reset ) 
+ 	{
+ 		seek_cur = 0;	
+ 	}
+ 
+ 	fseek ( file, seek_cur, SEEK_SET ); 	// seek to the current number of the file
+ 	
+  char number [100];
+  char buf;
+ 	int i = 0;
+ 	
+	if ( file == NULL ) 
+	{
+		perror ("Error opening file");
+    return 0;
+	}
+ 	else
+ 	{
+ 		fscanf ( file, "%llu", nombre );
+ 		seek_cur = ftell ( file );
+
+    //Si on est à la fin du fichier
+    if ( feof ( file ) )
+    {
+      return 0;
+   	}
+   }
+
+   return 1;
+}
 
 //---------------------------------------------------------------
 //			 		Main
@@ -22,7 +58,7 @@ main(int argc, char* argv[])
 	if (argc > 1) methode=atoi(argv[1]);
 
 	//Tableau de test
-	int val[4] = {27166, 1804289, 168150, 8469308};
+	//int val[4] = {27166, 1804289, 168150, 8469308};
 
 	//Sans thread
 	if (methode == 0)
@@ -37,7 +73,7 @@ main(int argc, char* argv[])
 	//Avec
 	else if (methode == 2)
 	{
-		dual_thread_optimise( val, 4 );
+		dual_thread_optimise( filePath );
 	}
 
 	//print_prime_factors(29872);
