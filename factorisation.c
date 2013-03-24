@@ -12,7 +12,7 @@
 //Renvoie 1 si entier, 0 sinon.
 int is_prime( uint64_t p )
 {
-	if (p <= 2)
+	if ( p <= 2 )
 	{
 		return 1;
 	}
@@ -20,10 +20,10 @@ int is_prime( uint64_t p )
 	{
 		int i;
 
-		for ( i = 2; i < p; i++)
+		for ( i = 2 ; i < p ; i++ )
 		{
 			//Si il est divisible par le nombre en cours.
-			if (p%i == 0)
+			if ( p%i == 0 )
 			{
 				//Il n'est pas premier
 				return 0;
@@ -75,11 +75,11 @@ void * print_prime_factors( void * n )
 //---------------------------------------------------------------
 
 //Structure utile pour lire dans un fichier en sécurité (merci les mutex !)
-struct protected_file {
+typedef struct protected_file {
 	char * path;
 	pthread_mutex_t * mutex;
-};
-typedef struct protected_file protected_file;
+	
+} protected_file;
 
 //temp_file.mutex à NULL pour désactiver la protection par mutex
 void * display_simple ( void * temp_file )
@@ -96,7 +96,7 @@ void * display_simple ( void * temp_file )
 		//Gère le cas ou on n'as pas besoin de mutex
 		if (pfile->mutex != NULL) 
 		{
-			pthread_mutex_lock(pfile->mutex);
+			pthread_mutex_lock (pfile->mutex);
 		}
 
 		file_end = lire_nombre(out, pfile->path, 0);

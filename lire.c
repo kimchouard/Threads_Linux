@@ -18,7 +18,6 @@ int lire_nombre ( uint64_t *nombre, char * filePath, int reset )
  
  	fseek ( file, seek_cur, SEEK_SET ); 	// seek to the current number of the file
  	
-  char number [100];
   char buf;
  	int i = 0;
  	
