@@ -10,13 +10,28 @@
 
 main(int argc, char* argv[])
 {
-	int methode = 0;
-	char * filePath = "gen.txt";
+	int methode = 3;
+	char * file_path;
 
 	//WARNING: le fichier doit se finir par un retour à la ligne, soit une ligne vide !!
 
 	//Quel methode ?	
-	if (argc > 1) methode=atoi(argv[1]);
+	if ( argc > 2 )
+	{
+		file_path = argv[1];
+		if ( !open_file ( file_path ) )
+		{
+			printf("The file cannot be found !");
+			exit ( 0 );
+		}
+		methode = atoi ( argv[2] );
+	} 
+	else
+	{
+		printf("Wrong parameters !\nYou should first indicate the file where to find the numbers and then the computing methode.");
+		exit ( 0 );
+	}
+
 
 	//Création de la version protégé du fichier
 	//protected_file pfile;
@@ -29,23 +44,24 @@ main(int argc, char* argv[])
 	//Sans thread
 	if (methode == 0)
 	{
-		//display_simple( &pfile );
+		one_thread ( );
 	}
 	//Avec thread simple
 	else if (methode == 1)
 	{
-		dual_thread( filePath );
+		dual_thread (  );
 	}
 	//Avec
 	else if (methode == 2)
 	{
-		dual_thread_optimise( filePath );
+		dual_thread_optimise( );
 	}
 	else if ( methode == 3 )
 	{
-		prime_factors_init ( );
-		print_prime_factor_q8 ( 27166 );
-		print_prime_factor_q8 ( 1804289 );
-		prime_factors_destroy ( );
+		dual_thread_optimise_q9 ( );
 	}
+
+	close_file ( );
+	
+	exit ( 0 );
 }

@@ -8,14 +8,14 @@
 
 
 //Renvoie 1 si premier, 0 sinon.
-int is_prime_saved( uint64_t p )
+int is_prime_saved ( uint64_t p )
 {
 	if ( p <= 2 )
 	{
-		prime_factors_insert ( p );
+		array_insert ( p );
 		return 1;
 	}
-	else if ( prime_factors_is_in( p ) )
+	else if ( array_is_in( p ) )
 	{
 		return 1;
 	}
@@ -32,7 +32,7 @@ int is_prime_saved( uint64_t p )
 				return 0;
 			}
 		}
-		prime_factors_insert ( p );
+		array_insert ( p );
 		return 1;
 	}
 }
@@ -63,7 +63,7 @@ int get_prime_factors ( uint64_t n, uint64_t *factors_tab )
 		tester = array->at[i];
         i++;
         
-        if ( prime_factors_is_in( reste ) )
+        if ( array_is_in ( reste ) )
         {
             factors_tab[index_factors++] = reste;
             return index_factors;   
@@ -94,7 +94,7 @@ int get_prime_factors ( uint64_t n, uint64_t *factors_tab )
 }
 
 
-void print_prime_factor_q8 ( uint64_t n )
+void print_prime_factors_q8 ( uint64_t n )
 {
 	uint64_t factors[64];
 	int j, k;
@@ -108,3 +108,33 @@ void print_prime_factor_q8 ( uint64_t n )
 	}
 	printf ( "\n" );
 }
+
+
+//---------------------------------------------------------------
+//	Question 9 : one thread 
+//---------------------------------------------------------------
+void * one_thread_q9 ( )
+{
+	uint64_t number;
+	while( ( number = read_number_safe ( ) ) )
+	{
+		print_prime_factors_q8 ( number );
+	}
+}
+
+void dual_thread_optimise_q9 ( )
+{
+	array_init ( );
+
+	pthread_t t1;
+	pthread_create( &t1, NULL, &one_thread_q9, NULL );
+	one_thread_q9 ( );
+
+	//Liaison avec le main
+	pthread_join ( t1, NULL );
+	
+	array_destroy ( );
+	//Quite les threads
+	//pthread_exit ( &t1 );
+}
+

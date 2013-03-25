@@ -19,26 +19,19 @@ static struct table {
 typedef struct table table;
 
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
-void prime_factors_init ( )
+void array_init ( )
 {
 	array = ( table * ) malloc ( sizeof ( table ) );
     
 	array->size = PAGE_SIZE;
 	array->at = ( uint64_t * ) malloc (  sizeof ( uint64_t ) * array->size );
 	array->last = -1;
-    
-	//Création du mutex
-	/*if ( pthread_mutex_init ( &mutex, NULL ) != 0 )
-	{
-		printf ( "\nError while initializing the mutex\n" );
-		exit ( 0 );
-	}*/
 }
 
-void prime_factors_insert ( uint64_t prime_factor )
+void array_insert ( uint64_t prime_factor )
 {
 	pthread_mutex_lock ( &mutex );
 	if ( array->last == array->size - 1 )
@@ -50,21 +43,23 @@ void prime_factors_insert ( uint64_t prime_factor )
 	pthread_mutex_unlock ( &mutex );
 }
 
-uint64_t prime_factors_at ( int i )
+uint64_t array_at ( int i )
 {
+	pthread_mutex_lock ( &mutex );
+	uint64_t res;
 	if ( i > array->last || i < 0 )
 	{
-		return 0;
+		res = 0;
 	}
 	else
 	{
-		pthread_mutex_lock ( &mutex );
-		return array->at[i];
-		pthread_mutex_unlock ( &mutex );
+		res = array->at[i];
 	}
+	pthread_mutex_unlock ( &mutex );
+	return res;
 }
 
-int prime_factors_is_in ( uint64_t nombre )
+int array_is_in ( uint64_t nombre )
 {
 	pthread_mutex_lock ( &mutex );
 	int i;
@@ -80,7 +75,7 @@ int prime_factors_is_in ( uint64_t nombre )
 	return succes;
 }
 
-void prime_factors_destroy ( )
+void array_destroy ( )
 {
 	free ( array->at );
 	free ( array );
