@@ -25,6 +25,7 @@ main(int argc, char* argv[])
 			exit ( 0 );
 		}
 		methode = atoi ( argv[2] );
+		init_print ( );
 	} 
 	else
 	{
@@ -62,6 +63,7 @@ main(int argc, char* argv[])
 	}
 
 	close_file ( );
-	
+	end_print ( );
+
 	exit ( 0 );
 }

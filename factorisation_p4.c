@@ -1,8 +1,10 @@
-#include "array.h"
 #include <stdint.h>
 #include <stdio.h>
-
+#include <stdlib.h>
 #include <pthread.h>
+
+#include "io.h"
+#include "array.h"
 
 #define MAX_FACTORS 64
 
@@ -10,31 +12,30 @@
 //Renvoie 1 si premier, 0 sinon.
 int is_prime_saved ( uint64_t p )
 {
-	if ( p <= 2 )
-	{
-		array_insert ( p );
-		return 1;
-	}
-	else if ( array_is_in( p ) )
-	{
-		return 1;
-	}
-	else
-	{
-		int i;
-
-		for ( i = 2 ; i < p ; i++ )
-		{
-			//Si il est divisible par le nombre en cours.
-			if ( p % i == 0 )
-			{
-				//Il n'est pas premier
-				return 0;
-			}
-		}
-		array_insert ( p );
-		return 1;
-	}
+    if ( array_is_in ( p ) )
+     {
+         return 1;
+     }
+     else if ( p < 2 )
+     {
+        return 1;
+     }
+     else
+     {
+         int i;
+         
+         for ( i = 2 ; i < p ; i++ )
+         {
+             //Si il est divisible par le nombre en cours.
+             if ( p % i == 0 )
+             {
+                 //Il n'est pas premier
+                 return 0;
+             }
+         }
+         array_insert ( p );
+         return 1;
+     }
 }
 
 
@@ -50,26 +51,32 @@ int get_prime_factors ( uint64_t n, uint64_t *factors_tab )
 	uint64_t reste = n;
     
 	//Question 9 : utilisation des résultats intermediaires
-	while ( i <= array->last )
+	while ( ( tester = array_at ( i ) ) != 0 )
 	{
 		//Tant qu'il est divisible par le premier
-		while ( reste % array->at[i] == 0 )
+		while ( reste % tester == 0 )
 		{
 			//On stocke le resultat de la division dans reste
-			reste = reste / array->at[i];
+			reste = reste / tester;
 			//On sauvegarde le nombre
-			factors_tab[index_factors++] = array->at[i];
+			factors_tab[index_factors++] = tester;
 		}
-		tester = array->at[i];
         i++;
         
         if ( array_is_in ( reste ) )
         {
             factors_tab[index_factors++] = reste;
-            return index_factors;   
+            return index_factors;
         }
 	}
-	
+	if ( index_factors >  0 )
+	{
+		tester = factors_tab[index_factors - 1];
+	}
+	else
+	{
+		tester = 2;
+	}
 	//On parcours tous les nombres jusqu'à ce que le reste soit premier.
 	while ( ! is_prime_saved ( reste ) )
 	{
@@ -80,17 +87,16 @@ int get_prime_factors ( uint64_t n, uint64_t *factors_tab )
 			while ( reste % tester == 0 )
 			{
 				//On stocke le resultat de la division dans reste
-				reste = reste / ( uint64_t ) tester;
+				reste = reste / tester;
 				//On sauvegarde le nombre
 				factors_tab[index_factors++] =  tester;
 			}
 		}
-        
 		tester++;
 	}
 	factors_tab[index_factors++] = reste;
     return index_factors;
-
+    
 }
 
 
@@ -101,17 +107,12 @@ void print_prime_factors_q8 ( uint64_t n )
 	
 	k = get_prime_factors ( n, factors );
 	
-	printf ( "%llu : ", n );
-	for ( j = 0 ; j < k ; j ++ )
-	{
-		printf ( "%llu ", factors[j] );	
-	}
-	printf ( "\n" );
+	print_safe ( n, factors, k );
 }
 
 
 //---------------------------------------------------------------
-//	Question 9 : one thread 
+//	Question 9 : one thread
 //---------------------------------------------------------------
 void * one_thread_q9 ( )
 {
@@ -120,18 +121,21 @@ void * one_thread_q9 ( )
 	{
 		print_prime_factors_q8 ( number );
 	}
+    return 0;
 }
 
 void dual_thread_optimise_q9 ( )
 {
 	array_init ( );
-
+    
 	pthread_t t1;
 	pthread_create( &t1, NULL, &one_thread_q9, NULL );
+	//pthread_create( &t2, NULL, &one_thread_q9, NULL );
 	one_thread_q9 ( );
-
+    
 	//Liaison avec le main
-	pthread_join ( t1, NULL );
+	pthread_exit ( &t1 );
+	//pthread_join ( t2, NULL );
 	
 	array_destroy ( );
 	//Quite les threads

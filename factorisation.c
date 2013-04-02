@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "io.h"
+
 #define OUT
 
 //---------------------------------------------------------------
@@ -40,7 +42,8 @@ void * print_prime_factors ( void * n )
 	uint64_t reste = *((uint64_t *) n);
 
 #ifdef OUT
-	printf ( "%llu : ", reste );
+	//printf ( "%llu : ", reste );
+	print_safe_number ( reste );
 #endif
 	
 	//On parcours tous les nombres jusqu'à ce que le reste soit premier.
@@ -57,7 +60,9 @@ void * print_prime_factors ( void * n )
 
 #ifdef OUT
 				//On affiche le nombre
-				printf("%i ", i);
+				//printf("%i ", i);
+				print_safe_factor ( i );
+
 #endif
 			}
 		}
@@ -66,7 +71,9 @@ void * print_prime_factors ( void * n )
 	}
 
 #ifdef OUT
-	printf("%llu \n", reste);
+	//printf("%llu \n", reste);
+	print_safe_factor ( reste );
+	print_safe_eol ( );
 #endif	
 }
 
@@ -119,7 +126,7 @@ void dual_thread ( )
 			}
 			//Liaison avec le main
 			pthread_join ( t1, NULL );
-			pthread_join ( t1, NULL );
+			pthread_join ( t2, NULL );
 			//?????Quite les threads?????
 			//pthread_exit ( &t1 );
 		}
